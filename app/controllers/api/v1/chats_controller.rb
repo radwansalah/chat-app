@@ -24,6 +24,8 @@ module Api
         @chat.write_attribute(:chat_num, sequence_id)
 
         if @chat.save
+          # IncreaseCountOfChatsJob.perform_in(59.minutes, @chat.application_id)
+          IncreaseCountOfChatsJob.perform_async(@chat.application_id)
           render json: @chat, status: :created
         else
           render json: @chat.errors, status: :unprocessable_entity

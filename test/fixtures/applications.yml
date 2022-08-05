@@ -2,8 +2,8 @@
 
 one:
   name: MyString
-  chat_count: 1
+  chats_count: 1
 
 two:
   name: MyString
-  chat_count: 1
+  chats_count: 1

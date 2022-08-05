@@ -5,7 +5,8 @@ module Api
 
       # GET /applications
       def index
-        @messages = Message.where(chat_id: params[:chat_id])
+        query = params["query"] || ""
+        @messages = Message.search(query, params[:chat_id])
 
         render json: @messages
       end
@@ -19,6 +20,7 @@ module Api
         @message.write_attribute(:id, sequence_id)
 
         if @message.save
+          IncreaseCountOfMessagesJob.perform_async(@message.chat_id)
           render json: @message, status: :created
         else
           render json: @message.errors, status: :unprocessable_entity

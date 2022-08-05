@@ -14,7 +14,7 @@ ActiveRecord::Schema.define(version: 2022_07_31_210446) do
 
   create_table "applications", id: :string, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.string "name", null: false
-    t.integer "chat_count", default: 0, null: false
+    t.integer "chats_count", default: 0, null: false
     t.boolean "is_deleted", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
