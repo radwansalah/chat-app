@@ -24,7 +24,6 @@ module Api
         @chat.write_attribute(:chat_num, sequence_id)
 
         if @chat.save
-          # IncreaseCountOfChatsJob.perform_in(59.minutes, @chat.application_id)
           IncreaseCountOfChatsJob.perform_async(@chat.application_id)
           render json: @chat, status: :created
         else
@@ -34,6 +33,7 @@ module Api
 
       # PATCH/PUT /chats/1
       def update
+        @chat.lock!
         if @chat.update(chat_params)
           render json: @chat
         else

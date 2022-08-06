@@ -16,8 +16,8 @@ module Api
         @message = Message.new(message_params)
 
         last_message = Message.where(chat_id: params[:chat_id]).last
-        sequence_id = last_message ? last_message.id[0] + 1 : 1
-        @message.write_attribute(:id, sequence_id)
+        sequence_id = last_message ? last_message.message_num + 1 : 1
+        @message.write_attribute(:message_num, sequence_id)
 
         if @message.save
           IncreaseCountOfMessagesJob.perform_async(@message.chat_id)
@@ -29,6 +29,7 @@ module Api
 
       # PATCH/PUT /messages/1
       def update
+        @message.lock!
         if @message.update(message_params)
           render json: @message
         else
@@ -39,7 +40,7 @@ module Api
       private
         # Use callbacks to share common setup or constraints between actions.
         def set_message
-          @message = Message.find([params[:id], params[:chat_id]])
+          @message = Message.find_by(message_num: params[:id], chat_id: params[:chat_id])
         end
 
         # Only allow a trusted parameter "white list" through.

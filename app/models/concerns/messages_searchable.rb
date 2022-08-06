@@ -7,8 +7,6 @@ module MessagesSearchable
     include Elasticsearch::Model
     include Elasticsearch::Model::Callbacks
 
-    Elasticsearch::Model.client = Elasticsearch::Client.new host: '127.0.0.1', port: 9200, user: 'elastic', password: '123456', scheme: 'https', transport_options: { ssl: { ca_file: '/Users/radwan/http_ca_elastic.crt' } }
-
     mapping do
       indexes :body, type: :text
     end
@@ -20,7 +18,7 @@ module MessagesSearchable
             must: [
               {
                 match: {
-                  body: query,
+                  body: query
                 }
               },
             ],

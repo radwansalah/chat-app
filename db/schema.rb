@@ -31,14 +31,15 @@ ActiveRecord::Schema.define(version: 2022_07_31_210446) do
     t.index ["chat_num", "application_id"], name: "index_chats_on_chat_num_and_application_id", unique: true
   end
 
-  create_table "messages", primary_key: ["id", "chat_id"], options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
-    t.bigint "id", null: false
-    t.bigint "chat_id", null: false
+  create_table "messages", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
+    t.bigint "message_num", null: false
+    t.bigint "chat_id"
     t.text "body", null: false
     t.boolean "is_deleted", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["chat_id"], name: "index_messages_on_chat_id"
+    t.index ["message_num", "chat_id"], name: "index_messages_on_message_num_and_chat_id", unique: true
   end
 
   add_foreign_key "chats", "applications"

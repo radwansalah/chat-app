@@ -42,6 +42,7 @@ module Api
 
       # PATCH/PUT /applications/1
       def update
+        @application.lock!
         if @application.update(application_params)
           render json: @application
         else
