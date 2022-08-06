@@ -1,0 +1,74 @@
+version: "3.9"
+
+services:
+  db:
+    image: "mysql:8.0.30"
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: P@ssw0rd
+      MYSQL_USERNAME: root
+      MYSQL_PASSWORD: P@ssw0rd
+        - '3306:3306'
+    expose:
+      - "3306"
+    volumes:
+      - db:/var/run/mysqld
+    ports:
+      - "33061:3306"
+  redis:
+    image: redis:7.0.4-alpine
+    command: redis-server
+    volumes:
+      - redis:/data
+    ports:
+      - "6379:6379"
+  web:
+    build: ./
+    command: bundle exec rails s -p 3000 -e development -b '0.0.0.0'
+    environment:
+      DB_USERNAME: root
+      DB_PASSWORD: P@ssw0rd
+      DB_PORT: 3306
+      DB_HOST: db
+      RAILS_ENV: development
+      RAILS_MAX_THREADS: 5
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      ELASTIC_HOST: elasticsearch
+      ELASTIC_PORT: 9200
+      BUNDLE_PATH: /bundle
+    volumes:
+      - ./:/rails-app
+      - bundle:/bundle
+    ports:
+      - "3000:3000"
+    depends_on:
+      - "db"
+      - "redis"
+  sidekiq:
+    build: ./
+    command: bundle exec sidekiq
+    volumes:
+      - ./:/rails-app
+    environment:
+      RAILS_ENV: development
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    depends_on:
+      - "db"
+      - "redis"
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.3.3
+    volumes:
+      - elasticsearch:/usr/share/elasticsearch/data
+    environment:
+      - xpack.security.enabled=false
+      - "discovery.type=single-node"
+    ports:
+      - 9200:9200
+volumes:
+  db:
+  bundle:
+  redis:
+  elasticsearch:

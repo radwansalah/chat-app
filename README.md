@@ -1,24 +1,23 @@
-# README
+# README.
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+RESTful endpoints for creating app, chat, messages
 
-Things you may want to cover:
+### Things you may want to cover:
 
-* Ruby version
+#### Ruby version
 
-* System dependencies
+    ruby 2.7.3
 
-* Configuration
+#### rails version
 
-* Database creation
+    Rails 5.2.8.1
 
-* Database initialization
+#### start with the following:
 
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+```
+> docker build . -t chat-app
+> docker-compose run web bundle install
+> docker-compose run web rails db:setup
+> docker-compose build
+> docker-compose up
+```
